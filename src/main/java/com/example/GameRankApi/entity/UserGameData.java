@@ -1,9 +1,6 @@
-// UserGameData.java
 package com.example.GameRankApi.entity;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
@@ -12,14 +9,41 @@ import jakarta.persistence.Table;
 public class UserGameData {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long num;
-
     private String uid;
     private String userName;
     private String userPassword;
     private String userComment;
 
-    // Getters and Setters
-    // ...
+    // Getters and setters
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getUserPassword() {
+        return userPassword;
+    }
+
+    public void setUserPassword(String userPassword) {
+        this.userPassword = userPassword;
+    }
+
+    public String getUserComment() {
+        return userComment;
+    }
+
+    public void setUserComment(String userComment) {
+        this.userComment = userComment;
+    }
 }
