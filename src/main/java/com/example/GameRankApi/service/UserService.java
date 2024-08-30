@@ -1,4 +1,3 @@
-// UserService.java
 package com.example.GameRankApi.service;
 
 import com.example.GameRankApi.entity.UserGameData;
