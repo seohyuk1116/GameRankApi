@@ -9,7 +9,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/rankings")
-@CrossOrigin(origins = "http://localhost:5173") // Vue.js 개발 서버 주소
 public class RankController {
 
     @Autowired
