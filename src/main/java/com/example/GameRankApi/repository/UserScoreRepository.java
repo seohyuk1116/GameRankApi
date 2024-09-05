@@ -7,6 +7,5 @@ import java.util.List;
 
 @Repository
 public interface UserScoreRepository extends JpaRepository<UserScore, Long> {
-    List<UserScore> findByUid(String uid);
     List<UserScore> findByUidOrderByDateDesc(String uid);
 }

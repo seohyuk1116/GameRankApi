@@ -25,10 +25,8 @@ public class UserService {
         return userScoreRepository.findByUidOrderByDateDesc(uid);
     }
 
-    // 이 메서드를 추가합니다
-    public UserScore getUserScore(String uid) {
-        List<UserScore> scores = userScoreRepository.findByUidOrderByDateDesc(uid);
-        return scores.isEmpty() ? null : scores.get(0);
+    public UserGameData saveUserGameData(UserGameData userGameData) {
+        return userGameDataRepository.save(userGameData);
     }
 
     public UserScore saveUserScore(UserScore userScore) {

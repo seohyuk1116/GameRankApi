@@ -23,7 +23,7 @@ public class RankService {
             case "bird_game":
                 return rankRepository.findAllByOrderByBirdGameDesc();
             default:
-                throw new IllegalArgumentException("Invalid game name: " + gameName);
+                throw new IllegalArgumentException("유효하지 않은 게임 이름: " + gameName);
         }
     }
 

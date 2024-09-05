@@ -5,12 +5,11 @@ import lombok.Getter;
 import lombok.Setter;
 import java.time.LocalDateTime;
 
-@Setter
-@Getter
 @Entity
+@Getter
+@Setter
 @Table(name = "userScore")
 public class UserScore {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long num;
@@ -22,7 +21,7 @@ public class UserScore {
     private String jumpGame;
     private String birdGame;
 
-    @Column(name = "score_date")
+    @Column(name = "DATE")
     private LocalDateTime date;
 
     @PrePersist
