@@ -1,44 +1,40 @@
 package com.example.GameRankApi.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import java.time.LocalDateTime;
 
 @Entity
+
+@Getter
+@Setter
 @Table(name = "ranks")
 public class Rank {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String playerName;
-    private int score;
+    @Column(name = "userName", nullable = false, length = 16)
+    private String userName;
 
-    // Getters and Setters
-    public Long getId() {
-        return id;
-    }
+    @Column(name = "memory_game", length = 32)
+    private String memoryGame;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @Column(name = "snake_game", length = 32)
+    private String snakeGame;
 
-    public String getPlayerName() {
-        return playerName;
-    }
+    @Column(name = "jump_game", length = 32)
+    private String jumpGame;
 
-    public void setPlayerName(String playerName) {
-        this.playerName = playerName;
-    }
+    @Column(name = "bird_game", length = 32)
+    private String birdGame;
 
-    public int getScore() {
-        return score;
-    }
+    @Column(name = "DATE")
+    private LocalDateTime date;
 
-    public void setScore(int score) {
-        this.score = score;
+    @PrePersist
+    protected void onCreate() {
+        date = LocalDateTime.now();
     }
 }

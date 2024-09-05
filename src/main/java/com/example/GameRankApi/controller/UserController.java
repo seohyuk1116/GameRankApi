@@ -1,14 +1,11 @@
-// UserController.java
 package com.example.GameRankApi.controller;
 
 import com.example.GameRankApi.entity.UserGameData;
 import com.example.GameRankApi.entity.UserScore;
 import com.example.GameRankApi.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
@@ -22,12 +19,13 @@ public class UserController {
         return userService.getUserGameData(uid);
     }
 
-    @GetMapping("/{uid}/score")
-    public UserScore getUserScore(@PathVariable String uid) {
-        return userService.getUserScore(uid);
+    @GetMapping("/{uid}/scores")
+    public List<UserScore> getUserScores(@PathVariable String uid) {
+        return userService.getUserScores(uid);
     }
 
-    // 추가적인 API 엔드포인트 구현
-
-
+    @PostMapping("/score")
+    public UserScore saveUserScore(@RequestBody UserScore userScore) {
+        return userService.saveUserScore(userScore);
+    }
 }

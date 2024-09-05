@@ -3,13 +3,20 @@ spring:
     url: jdbc:mysql://localhost:3306/game_data
     username: root
     password: 1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
   jpa:
     hibernate:
       ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
     show-sql: true
+
   sql:
     init:
       mode: always
+
   servlet:
     multipart:
       max-file-size: 2MB
@@ -18,4 +25,5 @@ spring:
 server:
   port: 8010
 
-# CORS 설정은 WebConfig.java에서 처리합니다.
+cors:
+  allowed-origins: http://localhost:5173,https://yourdomain.com
