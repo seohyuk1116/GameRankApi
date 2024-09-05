@@ -2,27 +2,38 @@ package com.example.GameRankApi.controller;
 
 import com.example.GameRankApi.entity.Rank;
 import com.example.GameRankApi.service.RankService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/ranks")
+@RequestMapping("/api/rankings")
+@CrossOrigin(origins = "http://localhost:5173") // Vue.js 개발 서버 주소
 public class RankController {
 
-    private final RankService rankService;
+    @Autowired
+    private RankService rankService;
 
-    public RankController(RankService rankService) {
-        this.rankService = rankService;
+    @GetMapping("/{gameName}")
+    public ResponseEntity<List<Rank>> getGameRankings(@PathVariable String gameName) {
+        try {
+            List<Rank> rankings = rankService.getGameRankings(gameName);
+            return ResponseEntity.ok(rankings);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
-    @GetMapping
-    public List<Rank> getAllRanks() {
-        return rankService.getAllRanks();
-    }
-
-    @PostMapping
-    public Rank saveRank(@RequestBody Rank rank) {
-        return rankService.saveRank(rank);
+    @PostMapping("/submit-score")
+    public ResponseEntity<Rank> submitScore(@RequestBody Rank rank) {
+        try {
+            Rank savedRank = rankService.saveRank(rank);
+            return ResponseEntity.ok(savedRank);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }

@@ -1,10 +1,9 @@
 package com.example.GameRankApi.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import java.time.LocalDateTime;
 
 @Setter
 @Getter
@@ -12,8 +11,10 @@ import lombok.Setter;
 @Table(name = "userScore")
 public class UserScore {
 
-    // Getters and setters
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long num;
+
     private String uid;
     private String userName;
     private String memoryGame;
@@ -21,4 +22,11 @@ public class UserScore {
     private String jumpGame;
     private String birdGame;
 
+    @Column(name = "score_date")
+    private LocalDateTime date;
+
+    @PrePersist
+    protected void onCreate() {
+        date = LocalDateTime.now();
+    }
 }
