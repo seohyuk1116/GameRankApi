@@ -1,31 +1,35 @@
 package com.example.GameRankApi.entity;
 
-import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import java.time.LocalDateTime;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import jakarta.persistence.*;
 
 @Entity
 @Getter
 @Setter
-@Table(name = "userScore")
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "user_score")
 public class UserScore {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long num;
-
+    @Column(name = "uid", length = 12, nullable = false)
     private String uid;
-    private String userName;
-    private String memoryGame;
-    private String snakeGame;
-    private String jumpGame;
-    private String birdGame;
 
-    @Column(name = "DATE")
-    private LocalDateTime date;
+    @Column(name = "memory_game_score")
+    private String memoryGameScore;
 
-    @PrePersist
-    protected void onCreate() {
-        date = LocalDateTime.now();
+    @Column(name = "snake_game_score")
+    private String snakeGameScore;
+
+    @Column(name = "jump_game_score")
+    private String jumpGameScore;
+
+    @Column(name = "bird_game_score")
+    private String birdGameScore;
+
+    public UserScore(String uid) {
+        this.uid = uid;
     }
 }

@@ -1,35 +1,61 @@
 package com.example.GameRankApi.service;
 
-import com.example.GameRankApi.entity.UserGameData;
+import com.example.GameRankApi.entity.UserData;
 import com.example.GameRankApi.entity.UserScore;
-import com.example.GameRankApi.repository.UserGameDataRepository;
+import com.example.GameRankApi.repository.UserDataRepository;
 import com.example.GameRankApi.repository.UserScoreRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
-    @Autowired
-    private UserGameDataRepository userGameDataRepository;
+    private final UserDataRepository userDataRepository;
+    private final UserScoreRepository userScoreRepository;
 
-    @Autowired
-    private UserScoreRepository userScoreRepository;
+    @Transactional
+    public UserData registerUser(UserData userData) {
+        if (userDataRepository.findById(userData.getUid()).isPresent()) {
+            throw new RuntimeException("이미 존재하는 아이디입니다.");
+        }
 
-    public UserGameData getUserGameData(String uid) {
-        return userGameDataRepository.findByUid(uid);
+        userData.setCreatedAt(LocalDateTime.now());
+        UserData savedUser = userDataRepository.save(userData);
+
+        UserScore userScore = new UserScore(savedUser.getUid());
+        userScoreRepository.save(userScore);
+
+        return savedUser;
     }
 
-    public List<UserScore> getUserScores(String uid) {
-        return userScoreRepository.findByUidOrderByDateDesc(uid);
+    public Optional<UserData> getUserByUid(String uid) {
+        return userDataRepository.findById(uid);
     }
 
-    public UserGameData saveUserGameData(UserGameData userGameData) {
-        return userGameDataRepository.save(userGameData);
+    public Optional<UserScore> getUserScoreByUid(String uid) {
+        return userScoreRepository.findById(uid);
     }
 
-    public UserScore saveUserScore(UserScore userScore) {
-        return userScoreRepository.save(userScore);
+    public UserData authenticateUser(String uid, String password) {
+        Optional<UserData> userData = userDataRepository.findById(uid);
+        if (userData.isPresent() && userData.get().getUserPassword().equals(password)) {
+            return userData.get();
+        }
+        return null;
+    }
+
+    @Transactional
+    public void updateUserProfile(String uid, UserData updatedUserData) {
+        userDataRepository.findById(uid).ifPresent(userData -> {
+            userData.setUserName(updatedUserData.getUserName());
+            userData.setUserBirthday(updatedUserData.getUserBirthday());
+            userData.setUserComment(updatedUserData.getUserComment());
+            userDataRepository.save(userData);
+        });
     }
 }
