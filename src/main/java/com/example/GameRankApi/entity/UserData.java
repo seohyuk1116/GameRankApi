@@ -18,10 +18,10 @@ public class UserData {
     @Column(name = "uid", length = 12, nullable = false)
     private String uid;
 
-    @Column(name = "user_name", length = 16, nullable = false)
+    @Column(name = "user_name", length = 16, nullable = false, unique = true)
     private String userName;
 
-    @Column(name = "user_password", length = 12, nullable = false)
+    @Column(name = "user_password", length = 256, nullable = false)
     private String userPassword;
 
     @Column(name = "user_birthday", length = 32)
