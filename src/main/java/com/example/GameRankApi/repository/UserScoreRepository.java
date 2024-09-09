@@ -6,9 +6,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface UserScoreRepository extends JpaRepository<UserScore, String> {
+    Optional<UserScore> findByUid(String uid);
+    Optional<UserScore> findByUserName(String userName);
+
     @Query(value = "SELECT * FROM user_score ORDER BY CAST(memory_game_score AS UNSIGNED) DESC LIMIT 10", nativeQuery = true)
     List<UserScore> findTop10ByMemoryGameScore();
 
