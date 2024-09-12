@@ -24,6 +24,9 @@ public class UserData {
     @Column(name = "user_password", length = 256, nullable = false)
     private String userPassword;
 
+//    @Column(name = "encrypt_password")
+//    private boolean encryptPassword = true;
+
     @Column(name = "user_birthday", length = 32)
     private String userBirthday;
 

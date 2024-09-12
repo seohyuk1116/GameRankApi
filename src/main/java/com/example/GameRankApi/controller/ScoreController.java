@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
@@ -36,7 +37,8 @@ public class ScoreController {
                         rankMap.put("uid", score.getUid());
                         rankMap.put("userName", score.getUserName());
                         rankMap.put("score", getScoreForGame(score, gameName));
-                        // 'date' 필드 제거 (LastUpdated가 더 이상 없음)
+                        LocalDateTime scoreTime = getScoreTimeForGame(score, gameName);
+                        rankMap.put("scoreTime", scoreTime != null ? scoreTime.format(formatter) : null);
                         return rankMap;
                     })
                     .sorted((a, b) -> {
@@ -67,7 +69,11 @@ public class ScoreController {
 
         try {
             UserScore updatedScore = scoreService.updateUserScore(uid, gameName, score);
-            return ResponseEntity.ok(Map.of("success", true, "message", "점수가 업데이트되었습니다.", "updatedScore", updatedScore));
+            if (updatedScore != null) {
+                return ResponseEntity.ok(Map.of("success", true, "message", "새로운 최고 점수가 업데이트되었습니다.", "updatedScore", updatedScore, "newHighScore", true));
+            } else {
+                return ResponseEntity.ok(Map.of("success", true, "message", "현재 점수가 최고 점수보다 낮아 업데이트되지 않았습니다.", "newHighScore", false));
+            }
         } catch (Exception e) {
             logger.error("Error updating score: {}", e.getMessage());
             return ResponseEntity.badRequest().body(Map.of("success", false, "message", "점수 업데이트에 실패했습니다: " + e.getMessage()));
@@ -98,6 +104,16 @@ public class ScoreController {
             case "jump_game" -> score.getJumpGameScore();
             case "bird_game" -> score.getBirdGameScore();
             default -> "0";
+        };
+    }
+
+    private LocalDateTime getScoreTimeForGame(UserScore score, String gameName) {
+        return switch (gameName) {
+            case "memory_game" -> score.getMemoryGameScoreTime();
+            case "snake_game" -> score.getSnakeGameScoreTime();
+            case "jump_game" -> score.getJumpGameScoreTime();
+            case "bird_game" -> score.getBirdGameScoreTime();
+            default -> null;
         };
     }
 }

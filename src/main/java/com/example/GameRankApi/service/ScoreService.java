@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.time.LocalDateTime;
 
 import java.util.List;
 
@@ -38,8 +39,8 @@ public class ScoreService {
     }
 
     @Transactional
-    public UserScore updateUserScore(String uid, String gameName, String score) {
-        logger.info("Updating score for user: {}, game: {}, score: {}", uid, gameName, score);
+    public UserScore updateUserScore(String uid, String gameName, String newScore) {
+        logger.info("Updating score for user: {}, game: {}, score: {}", uid, gameName, newScore);
         UserScore userScore = userScoreRepository.findByUid(uid)
                 .orElseGet(() -> {
                     UserData userData = userDataRepository.findByUid(uid)
@@ -47,27 +48,61 @@ public class ScoreService {
                     return new UserScore(uid, userData.getUserName());
                 });
 
+        LocalDateTime now = LocalDateTime.now();
+        boolean isNewHighScore = false;
+
         switch (gameName) {
             case "memory_game":
-                userScore.setMemoryGameScore(score);
+                if (isHigherScore(newScore, userScore.getMemoryGameScore())) {
+                    userScore.setMemoryGameScore(newScore);
+                    userScore.setMemoryGameScoreTime(now);
+                    isNewHighScore = true;
+                }
                 break;
             case "snake_game":
-                userScore.setSnakeGameScore(score);
+                if (isHigherScore(newScore, userScore.getSnakeGameScore())) {
+                    userScore.setSnakeGameScore(newScore);
+                    userScore.setSnakeGameScoreTime(now);
+                    isNewHighScore = true;
+                }
                 break;
             case "jump_game":
-                userScore.setJumpGameScore(score);
+                if (isHigherScore(newScore, userScore.getJumpGameScore())) {
+                    userScore.setJumpGameScore(newScore);
+                    userScore.setJumpGameScoreTime(now);
+                    isNewHighScore = true;
+                }
                 break;
             case "bird_game":
-                userScore.setBirdGameScore(score);
+                if (isHigherScore(newScore, userScore.getBirdGameScore())) {
+                    userScore.setBirdGameScore(newScore);
+                    userScore.setBirdGameScoreTime(now);
+                    isNewHighScore = true;
+                }
                 break;
             default:
-                logger.error("Invalid game name: {}", gameName);
                 throw new IllegalArgumentException("Invalid game name: " + gameName);
         }
 
-        UserScore savedScore = userScoreRepository.save(userScore);
-        logger.info("Score updated successfully for user: {}", uid);
-        return savedScore;
+        if (isNewHighScore) {
+            UserScore savedScore = userScoreRepository.save(userScore);
+            logger.info("New high score updated successfully for user: {}", uid);
+            return savedScore;
+        } else {
+            logger.info("Score not updated as it's not a new high score for user: {}", uid);
+            return null;
+        }
+    }
+
+    private boolean isHigherScore(String newScore, String currentScore) {
+        try {
+            double newScoreValue = Double.parseDouble(newScore);
+            double currentScoreValue = Double.parseDouble(currentScore);
+            return newScoreValue > currentScoreValue;
+        } catch (NumberFormatException e) {
+            logger.error("Error parsing scores: new score = {}, current score = {}", newScore, currentScore);
+            return false;
+        }
     }
 
     public UserScore getUserScoreByUid(String uid) {

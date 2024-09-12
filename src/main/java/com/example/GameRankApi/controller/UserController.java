@@ -49,6 +49,20 @@ public class UserController {
                 });
     }
 
+    //유저 아이디 이름 중복 확인
+    @GetMapping("/check-duplicate")
+    public ResponseEntity<?> checkDuplicate(@RequestParam String field, @RequestParam String value) {
+        boolean isDuplicate = userService.checkDuplicate(field, value);
+        return ResponseEntity.ok(Map.of("isDuplicate", isDuplicate));
+    }
+
+    //패스워드 인코딩 여부 확인해서 로그인할때
+    @GetMapping("/check-password-encoding")
+    public ResponseEntity<?> checkPasswordEncoding(@RequestParam String uid) {
+        boolean isEncoded = userService.isPasswordEncoded(uid);
+        return ResponseEntity.ok(Map.of("isEncoded", isEncoded));
+    }
+
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody UserData userData) {
         logger.info("Received registration request for user: {}", userData.getUid());
