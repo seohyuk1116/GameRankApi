@@ -23,6 +23,23 @@ public class UserService {
     private final UserScoreRepository userScoreRepository;
     private final PasswordEncoder passwordEncoder;
 
+    public boolean checkDuplicate(String field, String value) {
+        if ("uid".equals(field)) {
+            return userDataRepository.existsByUid(value);
+        } else if ("userName".equals(field)) {
+            return userDataRepository.existsByUserName(value);
+        }
+        return false;
+    }
+
+    // 이 메서드는 더 이상 필요하지 않으므로 제거합니다.
+    /*
+    public boolean isPasswordEncoded(String uid) {
+        return userDataRepository.findByUid(uid)
+                .map(UserData::isEncryptPassword)
+                .orElse(true); // 사용자를 찾지 못하면 기본적으로 인코딩된 것으로 간주
+    }
+    */
 
     @Transactional
     public UserData registerUser(UserData userData) {
@@ -36,6 +53,7 @@ public class UserService {
             throw new RuntimeException("이미 존재하는 사용자 이름입니다.");
         }
 
+        // 모든 비밀번호를 암호화합니다.
         String hashedPassword = passwordEncoder.encode(userData.getUserPassword());
         userData.setUserPassword(hashedPassword);
 
@@ -66,9 +84,12 @@ public class UserService {
         Optional<UserData> userData = userDataRepository.findByUid(uid);
 
         if (userData.isPresent()) {
-            // 저장된 해시와 입력된 비밀번호를 비교
-            if (passwordEncoder.matches(password, userData.get().getUserPassword())) {
-                return userData.get();
+            UserData user = userData.get();
+            String storedPassword = user.getUserPassword();
+
+            // 입력받은 비밀번호를 해시화하여 저장된 해시와 비교
+            if (passwordEncoder.matches(password, storedPassword)) {
+                return user;
             }
         }
         return null;
